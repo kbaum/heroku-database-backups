@@ -4,7 +4,7 @@ Simple heroku app which a script for capturing heroku database backups and copyi
 ## Installation
 
 
-First create a project on heroku with the (heroku-buildpack-multi)[https://github.com/ddollar/heroku-buildpack-multi].
+First create a project on heroku with the [heroku-buildpack-multi](https://github.com/ddollar/heroku-buildpack-multi).
 
 ```
 heroku create my-database-backups --buildpack https://github.com/ddollar/heroku-buildpack-multi
@@ -17,7 +17,7 @@ git remote add heroku git@heroku.com:my-database-backups.git
 git push heroku master
 ```
 
-Now we need to set some environment variables in order to get the heroku cli working properly.  (heroku-buildpack-toolbet)[We are using the https://github.com/gregburek/heroku-buildpack-toolbelt.git].
+Now we need to set some environment variables in order to get the heroku cli working properly.  [heroku-buildpack-toolbet](We are using the https://github.com/gregburek/heroku-buildpack-toolbelt.git).
 
 ```
 heroku config:add HEROKU_TOOLBELT_API_EMAIL=your-email@gmail.com -a my-database-backups
