@@ -38,7 +38,7 @@ And we'll need to also set the bucket and path where we would like to store our 
 heroku config:add S3_BUCKET_PATH=my-db-backup-bucket/backups/ -a my-database-backups
 ```  
 
-Finally, we need to add heroku scheduler and call database.sh on a regular interval with the appropriate database and vts app.
+Finally, we need to add heroku scheduler and call database.sh on a regular interval with the appropriate database and app.
 
 ```
 heroku addons:add scheduler -a my-database-backups
@@ -47,7 +47,7 @@ heroku addons:add scheduler -a my-database-backups
 Now open it up, in your browser with:
 
 ```
-heroku addons:open scheduler -a kbaums-database-backups
+heroku addons:open scheduler -a my-database-backups
 ```
 
 And add the following command to run as often as you like:
