@@ -15,9 +15,8 @@ if [[ -z "$S3_BUCKET_PATH" ]]; then
   exit 1
 fi
 
+BACKUP_FILE_NAME="$(date +"%Y-%m-%d-%S")-$APP-$DATABASE.dump"
 
-
-BACKUP_FILE_NAME="$APP.$DATABASE.$(date +"%Y.%m.%d.%S.%N").dump"
 /app/vendor/heroku-toolbelt/bin/heroku pgbackups:capture $DATABASE -e --app $APP
 curl -o $BACKUP_FILE_NAME `./vendor/heroku-toolbelt/bin/heroku pgbackups:url --app $APP` 
 gzip $BACKUP_FILE_NAME
