@@ -39,7 +39,7 @@ heroku config:add S3_BUCKET_PATH=my-db-backup-bucket/backups -a my-database-back
 ```  
 Be careful when setting the S3_BUCKET_PATH to leave off a trailing forward slash.  Amazon console s3 browser will not be able to locate your file if your directory has "//" (S3 does not really have directories.).
 
-Finally, we need to add heroku scheduler and call database.sh on a regular interval with the appropriate database and app.
+Finally, we need to add heroku scheduler and call [backup.sh](https://github.com/kbaum/heroku-database-backups/blob/master/bin/backup.sh) on a regular interval with the appropriate database and app.
 
 ```
 heroku addons:add scheduler -a my-database-backups
