@@ -1,4 +1,4 @@
-Simple heroku app which a script for capturing heroku database backups and copying to your s3 bucket.
+Simple heroku app with a bash script for capturing heroku database backups and copying to your s3 bucket.  Deploy this as a separate app within heroku and schedule the script to backup your production databases which exist within another heroku project.
 
 
 ## Installation
