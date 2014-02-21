@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# terminate script as soon as any command fails
+set -e
+
 if [[ -z "$APP" ]]; then
   echo "Missing APP variable which must be set to the name of your app where the db is located" 
   exit 1
