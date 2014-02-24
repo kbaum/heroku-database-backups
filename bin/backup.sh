@@ -21,7 +21,7 @@ fi
 BACKUP_FILE_NAME="$(date +"%Y-%m-%d-%H-%M")-$APP-$DATABASE.dump"
 
 /app/vendor/heroku-toolbelt/bin/heroku pgbackups:capture $DATABASE -e --app $APP
-curl -o $BACKUP_FILE_NAME `./vendor/heroku-toolbelt/bin/heroku pgbackups:url --app $APP` 
+curl -o $BACKUP_FILE_NAME `/app/vendor/heroku-toolbelt/bin/heroku pgbackups:url --app $APP` 
 gzip $BACKUP_FILE_NAME
 /app/vendor/awscli/bin/aws s3 cp $BACKUP_FILE_NAME.gz s3://$S3_BUCKET_PATH/$APP/$DATABASE/$BACKUP_FILE_NAME.gz
 echo "backup $BACKUP_FILE_NAME complete"
