@@ -4,7 +4,7 @@
 set -e
 
 if [[ -z "$APP" ]]; then
-  echo "Missing APP variable which must be set to the name of your app where the db is located" 
+  echo "Missing APP variable which must be set to the name of your app where the db is located"
   exit 1
 fi
 
@@ -20,14 +20,14 @@ fi
 
 #install aws-cli
 curl https://s3.amazonaws.com/aws-cli/awscli-bundle.zip -o awscli-bundle.zip
-jar xvf awscli-bundle.zip
+unzip awscli-bundle.zip
 chmod +x ./awscli-bundle/install
 ./awscli-bundle/install -i /tmp/aws
 
 BACKUP_FILE_NAME="$(date +"%Y-%m-%d-%H-%M")-$APP-$DATABASE.dump"
 
 /app/vendor/heroku-toolbelt/bin/heroku pgbackups:capture $DATABASE -e --app $APP
-curl -o $BACKUP_FILE_NAME `/app/vendor/heroku-toolbelt/bin/heroku pgbackups:url --app $APP` 
+curl -o $BACKUP_FILE_NAME `/app/vendor/heroku-toolbelt/bin/heroku pgbackups:url --app $APP`
 gzip $BACKUP_FILE_NAME
 /tmp/aws/bin/aws s3 cp $BACKUP_FILE_NAME.gz s3://$S3_BUCKET_PATH/$APP/$DATABASE/$BACKUP_FILE_NAME.gz
 echo "backup $BACKUP_FILE_NAME complete"
