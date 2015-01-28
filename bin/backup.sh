@@ -14,21 +14,32 @@ if [[ -z "$DATABASE" ]]; then
 fi
 
 if [[ -z "$S3_BUCKET_PATH" ]]; then
-  echo "Missing S3_BUCKET_PATH variable which must be set the directory in s3 where you would like to store your database backups"
+  echo "Missing S3_BUCKET_PATH variable which must be set to the directory in s3 where you would like to store your database backups"
   exit 1
 fi
 
-#install aws-cli
+# install the aws-cli
 curl https://s3.amazonaws.com/aws-cli/awscli-bundle.zip -o awscli-bundle.zip
 unzip awscli-bundle.zip
 chmod +x ./awscli-bundle/install
 ./awscli-bundle/install -i /tmp/aws
 
-BACKUP_FILE_NAME="$(date +"%Y-%m-%d-%H-%M")-$APP-$DATABASE.dump"
+BACKUP_FILE_NAME="$(date +"%Y-%m-%d-%H-%M-%S")-$APP.dump"
 
-/app/vendor/heroku-toolbelt/bin/heroku pgbackups:capture $DATABASE -e --app $APP
+# run the Heroku backup
+/app/vendor/heroku-toolbelt/bin/heroku pgbackups:capture $DATABASE --expire --app $APP
+
+# copy the backup output file to our local disk
 curl -o $BACKUP_FILE_NAME `/app/vendor/heroku-toolbelt/bin/heroku pgbackups:url --app $APP`
-gzip $BACKUP_FILE_NAME
-/tmp/aws/bin/aws s3 cp $BACKUP_FILE_NAME.gz s3://$S3_BUCKET_PATH/$APP/$DATABASE/$BACKUP_FILE_NAME.gz
-echo "backup $BACKUP_FILE_NAME complete"
 
+# compress the backup file - adds the suffix ".gz"
+gzip $BACKUP_FILE_NAME
+
+# copy the compressed file to S3
+/tmp/aws/bin/aws s3 cp $BACKUP_FILE_NAME.gz s3://$S3_BUCKET_PATH/$BACKUP_FILE_NAME.gz
+
+# list the copied file on S3
+/tmp/aws/bin/aws s3 ls s3://$S3_BUCKET_PATH/$BACKUP_FILE_NAME.gz
+
+# ... and relax
+echo "backup complete - $BACKUP_FILE_NAME"
