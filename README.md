@@ -42,7 +42,7 @@ Be careful when setting the S3_BUCKET_PATH to leave off a trailing forward slash
 Finally, we need to add heroku scheduler and call [backup.sh](https://github.com/kbaum/heroku-database-backups/blob/master/bin/backup.sh) on a regular interval with the appropriate database and app.
 
 ```
-heroku addons:add scheduler -a my-database-backups
+heroku addons:create scheduler -a my-database-backups
 ```
 
 Now open it up, in your browser with:
