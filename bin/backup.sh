@@ -23,6 +23,9 @@ if [[ -z "$S3_BUCKET_PATH" ]]; then
   exit 1
 fi
 
+# dumping status to log
+/app/vendor/heroku-toolbelt/bin/heroku status
+
 #install aws-cli
 echo "downloading aws cli"
 curl --progress-bar -o /tmp/awscli-bundle.zip https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
