@@ -18,6 +18,7 @@ git push heroku master
 ```
 
 Now we need to set some environment variables in order to get the heroku cli working properly using the [heroku-buildpack-toolbet](We are using the https://github.com/gregburek/heroku-buildpack-toolbelt.git).
+you can do so using the bin/config.py or setting the env variables yourself.
 
 ```
 heroku config:add HEROKU_TOOLBELT_API_EMAIL=your-email@gmail.com -a my-database-backups
@@ -54,9 +55,7 @@ heroku addons:open scheduler -a my-database-backups
 And add the following command to run as often as you like:
 
 ```
-APP=your-app DATABASE=HEROKU_POSTGRESQL_NAVY_URL /app/bin/backup.sh
+APP=your-app EXPIRE_IN=expiration-in-days DATABASE=HEROKU_POSTGRESQL_NAVY_URL /app/bin/backup.sh
 ```
 
-In the above command, APP is the name of your app within heroku that contains the database.  DATABASE is the name of the database you would like to capture and backup.  In our setup, DATABASE actually points to a follower database to avoid any impact to our users.  Both of these environment variables can also be set within your heroku config rather than passing into the script invocation.
-
-
+In the above command, APP is the name of your app within heroku that contains the database. EXPIRE_IN is the amount of days the backup will expire after it has been uploaded. DATABASE is the name of the database you would like to capture and backup.  In our setup, DATABASE actually points to a follower database to avoid any impact to our users.  Both of these environment variables can also be set within your heroku config rather than passing into the script invocation.
