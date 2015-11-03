@@ -11,7 +11,11 @@ SECRET=$3
 DEFAULT_REGION=$4
 BUCKET=$5
 
+heroku config:add HEROKU_TOOLBELT_API_EMAIL=`heroku auth` -a $APP
+heroku config:add HEROKU_TOOLBELT_API_PASSWORD=`heroku auth:token` -a $APP
 heroku config:add AWS_ACCESS_KEY_ID=$ACCESS_KEY -a $APP
 heroku config:add AWS_DEFAULT_REGION=$DEFAULT_REGION -a $APP
 heroku config:add AWS_SECRET_ACCESS_KEY=$SECRET -a $APP
 heroku config:add S3_BUCKET_PATH=$BUCKET -a $APP
+heroku addons:create scheduler -a $APP
+heroku addons:open scheduler -a $APP
