@@ -20,8 +20,7 @@ git push heroku master
 Now we need to set some environment variables in order to get the heroku cli working properly using the [heroku-buildpack-toolbet](We are using the https://github.com/gregburek/heroku-buildpack-toolbelt.git).
 
 ```
-heroku config:add HEROKU_TOOLBELT_API_EMAIL=your-email@gmail.com -a my-database-backups
-heroku config:add HEROKU_TOOLBELT_API_PASSWORD=`heroku auth:token` -a my-database-backups
+heroku config:add HEROKU_API_KEY=`heroku auth:token` -a my-database-backups
 ```
 
 Next we need to add the amazon key and secret.
