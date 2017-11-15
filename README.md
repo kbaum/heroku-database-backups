@@ -22,7 +22,7 @@ git remote add heroku git@heroku.com:my-database-backups.git
 git push heroku master
 ```
 
-Now we need to set some environment variables in order to get the heroku cli working properly using the [heroku-buildpack-cli](https://github.com/gregburek/heroku-buildpack-cli.git).
+Now we need to set some environment variables in order to get the heroku cli working properly using the [heroku-buildpack-cli](https://github.com/heroku/heroku-buildpack-cli).
 
 ```
 heroku config:add HEROKU_API_KEY=`heroku auth:token` -a my-database-backups
