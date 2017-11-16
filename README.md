@@ -9,7 +9,7 @@ First create a project on heroku.
 ```
 heroku create my-database-backups
 ```
-Add the heroku-buildpack-toolbelt:
+Add the heroku-buildpack-cli:
 
 ```
 heroku buildpacks:add https://github.com/heroku/heroku-buildpack-cli -a  my-database-backups
@@ -22,7 +22,7 @@ git remote add heroku git@heroku.com:my-database-backups.git
 git push heroku master
 ```
 
-Now we need to set some environment variables in order to get the heroku cli working properly using the [heroku-buildpack-toolbet](https://github.com/gregburek/heroku-buildpack-toolbelt.git).
+Now we need to set some environment variables in order to get the heroku cli working properly using the [heroku-buildpack-cli](https://github.com/heroku/heroku-buildpack-cli).
 
 ```
 heroku config:add HEROKU_API_KEY=`heroku auth:token` -a my-database-backups
