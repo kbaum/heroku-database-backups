@@ -35,6 +35,16 @@ if [[ -z "$NOGZIP" ]]; then
   FINAL_FILE_NAME=$BACKUP_FILE_NAME.gz
 fi
 
+# to be able to upload into S3 bucket under a different AWS account you first
+# need to run the "assume-role" request to get temporary AWS credentials, then
+# save them to env; more on http://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html
+if [[ -v "$AWS_ROLE_ARN" ]]; then
+    /tmp/aws/bin/aws sts assume-role --role-arn $AWS_ROLE_ARN --role-session-name "pgbackups-archive" > session.json
+    export AWS_ACCESS_KEY_ID=$(grep AccessKeyId session.json | cut -d '"' -f4)
+    export AWS_SECRET_ACCESS_KEY=$(grep SecretAccessKey session.json | cut -d '"' -f4)
+    export AWS_SESSION_TOKEN=$(grep SessionToken session.json | cut -d '"' -f4)
+fi
+
 /tmp/aws/bin/aws s3 cp $FINAL_FILE_NAME s3://$S3_BUCKET_PATH/$APP/$DATABASE/$FINAL_FILE_NAME
 
 echo "backup $FINAL_FILE_NAME complete"
