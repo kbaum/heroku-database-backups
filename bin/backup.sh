@@ -26,7 +26,7 @@ chmod +x ./awscli-bundle/install
 
 BACKUP_FILE_NAME="$(date +"%Y-%m-%d-%H-%M")-$APP-$DATABASE.dump"
 
-heroku pg:backups capture $DATABASE --app $APP
+# heroku pg:backups capture $DATABASE --app $APP
 curl -o $BACKUP_FILE_NAME `heroku pg:backups:url --app $APP`
 FINAL_FILE_NAME=$BACKUP_FILE_NAME
 
