@@ -92,3 +92,14 @@ APP=your-app DATABASE=HEROKU_POSTGRESQL_NAVY_URL /app/bin/backup.sh
 ```
 
 In the above command, APP is the name of your app within heroku that contains the database.  DATABASE is the name of the database you would like to capture and backup.  In our setup, DATABASE actually points to a follower database to avoid any impact to our users.  Both of these environment variables can also be set within your heroku config rather than passing into the script invocation.
+
+### Test it
+
+To ensure everything is configured correctly, get a shell to your project and execute the command as the scheduler would.
+
+```
+heroku run bash -a my-database-backups
+$ APP=your-app DATABASE=HEROKU_POSTGRESQL_NAVY_URL /app/bin/backup.sh
+... a lot of debugging info...
+backup 2018-08-21-01-23-your-app-HEROKU_POSTGRESQL_NAVY_URL.dump.gz complete
+```
