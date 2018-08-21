@@ -4,7 +4,9 @@ Simple heroku app with a bash script for capturing heroku database backups and c
 ## Installation
 
 
-First create a project on heroku.
+First, clone this repository.
+
+Then, create a project on heroku.
 
 ```
 heroku create my-database-backups
@@ -40,7 +42,7 @@ And we'll need to also set the bucket and path where we would like to store our 
 
 ```
 heroku config:add S3_BUCKET_PATH=my-db-backup-bucket/backups -a my-database-backups
-```  
+```
 Be careful when setting the S3_BUCKET_PATH to leave off a trailing forward slash.  Amazon console s3 browser will not be able to locate your file if your directory has "//" (S3 does not really have directories.).
 
 Finally, we need to add heroku scheduler and call [backup.sh](https://github.com/kbaum/heroku-database-backups/blob/master/bin/backup.sh) on a regular interval with the appropriate database and app.
@@ -62,5 +64,3 @@ APP=your-app DATABASE=HEROKU_POSTGRESQL_NAVY_URL /app/bin/backup.sh
 ```
 
 In the above command, APP is the name of your app within heroku that contains the database.  DATABASE is the name of the database you would like to capture and backup.  In our setup, DATABASE actually points to a follower database to avoid any impact to our users.  Both of these environment variables can also be set within your heroku config rather than passing into the script invocation.
-
-
