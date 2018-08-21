@@ -46,7 +46,7 @@ heroku config:add HEROKU_API_KEY=`heroku auth:token` -a my-database-backups
 
 ### Set AWS environment variables
 
-Next we need to add the amazon key and secret.
+Next we need to add the Amazon key and secret.
 
 ```
 heroku config:add AWS_ACCESS_KEY_ID=123456 -a my-database-backups
