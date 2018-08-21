@@ -1,4 +1,4 @@
-Simple heroku app with a bash script for capturing heroku database backups and copying to your s3 bucket.  Deploy this as a separate app within heroku and schedule the script to backup your production databases which exist within another heroku project.
+Simple heroku app with a bash script for capturing heroku database backups and copying to your S3 Bucket or Glacier Vault.  Deploy this as a separate app within heroku and schedule the script to backup your production databases which exist within another heroku project.
 
 
 ## Installation
@@ -36,12 +36,22 @@ heroku config:add AWS_DEFAULT_REGION=us-east-1 -a my-database-backups
 heroku config:add AWS_SECRET_ACCESS_KEY=132345verybigsecret -a my-database-backups
 ```
 
-And we'll need to also set the bucket and path where we would like to store our database backups:
+And we'll need to also set the bucket or vault where we would like to store our database backups. Pick only one.
+
+## S3 Bucket
 
 ```
 heroku config:add S3_BUCKET_PATH=my-db-backup-bucket/backups -a my-database-backups
-```  
+```
 Be careful when setting the S3_BUCKET_PATH to leave off a trailing forward slash.  Amazon console s3 browser will not be able to locate your file if your directory has "//" (S3 does not really have directories.).
+
+## Glacier Vault
+
+```
+heroku config:add GLACIER_VAULT=my-db-backup-vault -a my-database-backups
+```
+
+The archive will have a description containing the date, app, and database.
 
 Finally, we need to add heroku scheduler and call [backup.sh](https://github.com/kbaum/heroku-database-backups/blob/master/bin/backup.sh) on a regular interval with the appropriate database and app.
 
@@ -62,5 +72,3 @@ APP=your-app DATABASE=HEROKU_POSTGRESQL_NAVY_URL /app/bin/backup.sh
 ```
 
 In the above command, APP is the name of your app within heroku that contains the database.  DATABASE is the name of the database you would like to capture and backup.  In our setup, DATABASE actually points to a follower database to avoid any impact to our users.  Both of these environment variables can also be set within your heroku config rather than passing into the script invocation.
-
-
