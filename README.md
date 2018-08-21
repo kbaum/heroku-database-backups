@@ -3,17 +3,23 @@ Simple heroku app with a bash script for capturing heroku database backups and c
 
 ## Installation
 
+### Create a Heroku Project
 
-First create a project on heroku.
+Create a project on heroku to handle the backups.
 
 ```
 heroku create my-database-backups
 ```
-Add the heroku-buildpack-cli:
+
+### Clone this project
+
+Make a clone of this project.
 
 ```
-heroku buildpacks:add https://github.com/heroku/heroku-buildpack-cli -a  my-database-backups
+git clone https://github.com/kbaum/heroku-database-backups.git
 ```
+
+### Push to Heroku
 
 Next push this project to your heroku projects git repository.
 
@@ -22,11 +28,23 @@ git remote add heroku git@heroku.com:my-database-backups.git
 git push heroku master
 ```
 
+### Add the Buildpack
+
+Add the required heroku-buildpack-cli:
+
+```
+heroku buildpacks:add https://github.com/heroku/heroku-buildpack-cli -a  my-database-backups
+```
+
+### Set Heroku environment variables
+
 Now we need to set some environment variables in order to get the heroku cli working properly using the [heroku-buildpack-cli](https://github.com/heroku/heroku-buildpack-cli).
 
 ```
 heroku config:add HEROKU_API_KEY=`heroku auth:token` -a my-database-backups
 ```
+
+### Set AWS environment variables
 
 Next we need to add the amazon key and secret.
 
@@ -36,22 +54,24 @@ heroku config:add AWS_DEFAULT_REGION=us-east-1 -a my-database-backups
 heroku config:add AWS_SECRET_ACCESS_KEY=132345verybigsecret -a my-database-backups
 ```
 
-And we'll need to also set the bucket or vault where we would like to store our database backups. Pick only one.
+And we'll need to also set the S3 Bucket or Glacier Vault where we would like to store our database backups. *Pick only one*.
 
-## S3 Bucket
+#### S3 Bucket
 
 ```
 heroku config:add S3_BUCKET_PATH=my-db-backup-bucket/backups -a my-database-backups
 ```
 Be careful when setting the S3_BUCKET_PATH to leave off a trailing forward slash.  Amazon console s3 browser will not be able to locate your file if your directory has "//" (S3 does not really have directories.).
 
-## Glacier Vault
+#### Glacier Vault
 
 ```
 heroku config:add GLACIER_VAULT=my-db-backup-vault -a my-database-backups
 ```
 
 The archive will have a description containing the date, app, and database.
+
+### Schedule the Backups
 
 Finally, we need to add heroku scheduler and call [backup.sh](https://github.com/kbaum/heroku-database-backups/blob/master/bin/backup.sh) on a regular interval with the appropriate database and app.
 
