@@ -28,6 +28,12 @@ Now we need to set some environment variables in order to get the heroku cli wor
 heroku config:add HEROKU_API_KEY=`heroku auth:token` -a my-database-backups
 ```
 
+This creates a token that will quietly expire in one year. To create a long-lived authorization token instead, do this:
+
+```
+heroku config:add HEROKU_API_KEY=`heroku authorizations:create -S -d my-database-backups` -a my-database-backups
+```
+
 Next we need to add the amazon key and secret.
 
 ```
