@@ -47,6 +47,13 @@ heroku config:add HEROKU_API_KEY=`heroku auth:token` -a my-database-backups
 ### Set AWS environment variables
 
 Next we need to add the Amazon key and secret.
+This creates a token that will quietly expire in one year. To create a long-lived authorization token instead, do this:
+
+```
+heroku config:add HEROKU_API_KEY=`heroku authorizations:create -S -d my-database-backups` -a my-database-backups
+```
+
+Next we need to add the amazon key and secret.
 
 ```
 heroku config:add AWS_ACCESS_KEY_ID=123456 -a my-database-backups
