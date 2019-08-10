@@ -4,7 +4,14 @@ Simple heroku app with a bash script for capturing heroku database backups and c
 ## Installation
 
 
-First create a project on heroku.
+First, clone this project, then change directory into the newly created directory:
+
+```
+git clone https://github.com/kbaum/heroku-database-backups.git
+cd heroku-database-backups
+```
+
+Create a project on heroku.
 
 ```
 heroku create my-database-backups
@@ -18,7 +25,7 @@ heroku buildpacks:add https://github.com/heroku/heroku-buildpack-cli -a  my-data
 Next push this project to your heroku projects git repository.
 
 ```
-git remote add heroku git@heroku.com:my-database-backups.git
+heroku git:remote -a my-database-backups
 git push heroku master
 ```
 
@@ -34,7 +41,7 @@ This creates a token that will quietly expire in one year. To create a long-live
 heroku config:add HEROKU_API_KEY=`heroku authorizations:create -S -d my-database-backups` -a my-database-backups
 ```
 
-Next we need to add the amazon key and secret.
+Next we need to add the amazon key and secret from the IAM user that you are using:
 
 ```
 heroku config:add AWS_ACCESS_KEY_ID=123456 -a my-database-backups
