@@ -42,3 +42,9 @@ elif [[ "$GLACIER_VAULT" ]]; then
 fi
 
 echo "backup $FINAL_FILE_NAME complete"
+
+if [[ -n "$HEARTBEAT_URL" ]]; then
+  echo "Sending a request to the specified HEARTBEAT_URL that the backup was created"
+  curl $HEARTBEAT_URL
+  echo "heartbeat complete"
+fi

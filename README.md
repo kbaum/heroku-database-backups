@@ -116,4 +116,11 @@ heroku run bash -a my-database-backups
 $ APP=your-app DATABASE=HEROKU_POSTGRESQL_NAVY_URL /app/bin/backup.sh
 ... a lot of debugging info...
 backup 2018-08-21-01-23-your-app-HEROKU_POSTGRESQL_NAVY_URL.dump.gz complete
+
+### Optional
+
+You can add a `HEARTBEAT_URL` to the script so a request gets sent every time a backup is made. All you have to do is add the variable value like:
+
+```
+heroku config:add HEARTBEAT_URL=https://hearbeat.url -a my-database-backups
 ```
