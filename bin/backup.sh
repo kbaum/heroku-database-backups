@@ -21,18 +21,29 @@ fi
 # install aws-cli
 #  - this will already exist if we're running the script manually from a dyno more than once
 
-aws_command="/tmp/aws/bin/aws"
+aws_command="/tmp/bin/aws"
 
 if [[ ! -f "${aws_command}" ]]; then
-  curl https://s3.amazonaws.com/aws-cli/awscli-bundle.zip -o awscli-bundle.zip
-  unzip awscli-bundle.zip
-  chmod +x ./awscli-bundle/install
-  ./awscli-bundle/install -i /tmp/aws
+  echo "aws cli v2..."
+  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  unzip -q awscliv2.zip
+  ./aws/install --bin-dir /tmp/bin --install-dir /tmp/aws
 fi
 
-BACKUP_FILE_NAME="$(date +"%Y-%m-%d-%H-%M")-$APP-$DATABASE.dump"
+# if the app has heroku pg:backup:schedules, we might just want to just archive the latest backup to S3
+# https://devcenter.heroku.com/articles/heroku-postgres-backups#scheduling-backups
+#
+# set ONLY_CAPTURE_TO_S3 when calling to skip database capture
 
-heroku pg:backups capture $DATABASE --app $APP
+BACKUP_FILE_NAME="$(date +"%Y-%m-%d_%H-%M_%Z__")${APP}_${DATABASE}.dump"
+
+if [[ -z "$ONLY_CAPTURE_TO_S3" ]]; then
+  heroku pg:backups capture $DATABASE --app $APP
+else
+  BACKUP_FILE_NAME="archive__${BACKUP_FILE_NAME}"
+  echo " --- Skipping database capture"
+fi
+
 curl -o $BACKUP_FILE_NAME `heroku pg:backups:url --app $APP`
 FINAL_FILE_NAME=$BACKUP_FILE_NAME
 
