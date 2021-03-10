@@ -13,8 +13,8 @@ if [[ -z "$DATABASE" ]]; then
   exit 1
 fi
 
-if [[ -z "$S3_BUCKET_PATH" ]]; then
-  echo "Missing S3_BUCKET_PATH variable which must be set the directory in s3 where you would like to store your database backups"
+if [[ -z "$S3_BUCKET_PATH" && -z "$GLACIER_VAULT" ]]; then
+  echo "Either S3_BUCKET_PATH or GLACIER_VAULT must be set to the S3 Bucket or Glaicer Vault where you would like to store your database backups"
   exit 1
 fi
 
@@ -52,7 +52,11 @@ if [[ -z "$NOGZIP" ]]; then
   FINAL_FILE_NAME=$BACKUP_FILE_NAME.gz
 fi
 
-${aws_command} s3 cp $FINAL_FILE_NAME s3://$S3_BUCKET_PATH/$APP/$DATABASE/$FINAL_FILE_NAME
+if [[ "$S3_BUCKET_PATH" ]]; then
+  ${aws_command} s3 cp $FINAL_FILE_NAME s3://$S3_BUCKET_PATH/$APP/$DATABASE/$FINAL_FILE_NAME
+elif [[ "$GLACIER_VAULT" ]]; then
+  ${aws_command} glacier upload-archive --account-id - --vault-name $GLACIER_VAULT --archive-description $BACKUP_FILE_NAME --body $FINAL_FILE_NAME
+fi
 
 echo "backup $FINAL_FILE_NAME complete"
 
