@@ -1,9 +1,17 @@
 Simple Heroku app with a bash script for capturing Heroku database backups and copying to your S3 Bucket or Glacier Vault.  Deploy this as a separate app within Heroku and schedule the script to backup your production databases which exist within another Heroku project.
 
+Now using [aws cli v2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html) - works with both `heroku-18` and `heroku-20` stacks.
 
 ## Installation
 
 ### Create a Heroku Project
+
+First, clone this project, then change directory into the newly created directory:
+
+```
+git clone https://github.com/kbaum/heroku-database-backups.git
+cd heroku-database-backups
+```
 
 Create a project on Heroku to handle the backups.
 
@@ -24,7 +32,7 @@ git clone https://github.com/kbaum/heroku-database-backups.git
 Next push this project to your Heroku projects git repository.
 
 ```
-git remote add heroku git@heroku.com:my-database-backups.git
+heroku git:remote -a my-database-backups
 git push heroku master
 ```
 
@@ -47,6 +55,13 @@ heroku config:add HEROKU_API_KEY=`heroku auth:token` -a my-database-backups
 ### Set AWS environment variables
 
 Next we need to add the Amazon key and secret.
+This creates a token that will quietly expire in one year. To create a long-lived authorization token instead, do this:
+
+```
+heroku config:add HEROKU_API_KEY=`heroku authorizations:create -S -d my-database-backups` -a my-database-backups
+```
+
+Next we need to add the amazon key and secret from the IAM user that you are using:
 
 ```
 heroku config:add AWS_ACCESS_KEY_ID=123456 -a my-database-backups
@@ -102,4 +117,26 @@ heroku run bash -a my-database-backups
 $ APP=your-app DATABASE=HEROKU_POSTGRESQL_NAVY_URL /app/bin/backup.sh
 ... a lot of debugging info...
 backup 2018-08-21-01-23-your-app-HEROKU_POSTGRESQL_NAVY_URL.dump.gz complete
+
+### Optional
+
+You can add a `HEARTBEAT_URL` to the script so a request gets sent every time a backup is made. All you have to do is add the variable value like:
+
+```
+heroku config:add HEARTBEAT_URL=https://hearbeat.url -a my-database-backups
+```
+
+If you are using [heroku's scheduled backups](https://devcenter.heroku.com/articles/heroku-postgres-backups#scheduling-backups) you might only want to archive the latest
+backup to S3 for long-term storage. Set the `ONLY_CAPTURE_TO_S3` variable when running the command:
+
+```
+ONLY_CAPTURE_TO_S3=true APP=your-app DATABASE=HEROKU_POSTGRESQL_NAVY_URL /app/bin/backup.sh
+```
+
+#### Tip
+
+The default timezone is `UTC`. To use your [preferred timezone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) in the filename timestamp, set the `TZ` variable when calling the command:
+
+```
+TZ=America/Los_Angeles APP=your-app DATABASE=HEROKU_POSTGRESQL_NAVY_URL /app/bin/backup.sh
 ```
