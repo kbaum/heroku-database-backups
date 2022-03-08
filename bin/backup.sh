@@ -13,31 +13,30 @@ if [[ -z "$DATABASE" ]]; then
   exit 1
 fi
 
-if [[ -z "$S3_BUCKET_PATH" ]]; then
-  echo "Missing S3_BUCKET_PATH variable which must be set the directory in s3 where you would like to store your database backups"
+if [[ -z "$GS_BUCKET_NAME" ]]; then
+  echo "Missing GS_BUCKET_NAME variable which must be set to the bucket in google storage where you would like to store your database backups"
   exit 1
 fi
 
-# install aws-cli
+# install gsutil
 #  - this will already exist if we're running the script manually from a dyno more than once
 
-aws_command="/tmp/bin/aws"
+gsutil_command="/tmp/gsutil/gsutil"
 
-if [[ ! -f "${aws_command}" ]]; then
-  echo "aws cli v2..."
-  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  unzip -q awscliv2.zip
-  ./aws/install --bin-dir /tmp/bin --install-dir /tmp/aws
+if [[ ! -f "${gsutil_command}" ]]; then
+  echo "Downloading gsutil..."
+  curl "https://storage.googleapis.com/pub/gsutil.zip" -o "gsutil.zip" 
+  unzip -q gsutil.zip -d /tmp/gsutil
 fi
 
-# if the app has heroku pg:backup:schedules, we might just want to just archive the latest backup to S3
+# if the app has heroku pg:backup:schedules, we might just want to just archive the latest backup to GS 
 # https://devcenter.heroku.com/articles/heroku-postgres-backups#scheduling-backups
 #
-# set ONLY_CAPTURE_TO_S3 when calling to skip database capture
+# set ONLY_CAPTURE_TO_GS when calling to skip database capture
 
 BACKUP_FILE_NAME="$(date +"%Y-%m-%d_%H-%M_%Z__")${APP}_${DATABASE}.dump"
 
-if [[ -z "$ONLY_CAPTURE_TO_S3" ]]; then
+if [[ -z "$ONLY_CAPTURE_TO_GS" ]]; then
   heroku pg:backups capture $DATABASE --app $APP
 else
   BACKUP_FILE_NAME="archive__${BACKUP_FILE_NAME}"
@@ -52,7 +51,7 @@ if [[ -z "$NOGZIP" ]]; then
   FINAL_FILE_NAME=$BACKUP_FILE_NAME.gz
 fi
 
-${aws_command} s3 cp $FINAL_FILE_NAME s3://$S3_BUCKET_PATH/$APP/$DATABASE/$FINAL_FILE_NAME
+${gsutil_command} cp $FINAL_FILE_NAME gs://$GS_BUCKET_PATH/$APP/$DATABASE/$FINAL_FILE_NAME
 
 echo "backup $FINAL_FILE_NAME complete"
 
